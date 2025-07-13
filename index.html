@@ -16,6 +16,7 @@
             min-height: 100vh;
             padding: 20px;
             box-sizing: border-box;
+            position: relative; /* Needed for absolute positioning of admin button */
         }
         .container {
             background-color: #ffffff;
@@ -36,7 +37,8 @@
             color: #334155;
         }
         .form-group input[type="text"],
-        .form-group input[type="number"] {
+        .form-group input[type="number"],
+        .form-group input[type="password"] {
             width: 100%;
             padding: 12px;
             border: 1px solid #cbd5e1;
@@ -47,37 +49,48 @@
             transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
         .form-group input[type="text"]:focus,
-        .form-group input[type="number"]:focus {
+        .form-group input[type="number"]:focus,
+        .form-group input[type="password"]:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
         }
+        .delay-settings-group { /* New class for the admin delay settings */
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background-color: #f0f4f8;
+        }
+        .delay-settings-group .checkbox-group {
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
         .checkbox-group {
             display: flex;
             align-items: center;
-            margin-top: -8px; /* Adjust to align with other form groups */
             margin-bottom: 16px;
         }
         .checkbox-group input[type="checkbox"] {
             margin-right: 8px;
             width: 20px;
             height: 20px;
-            accent-color: #3b82f6; /* Style checkbox color */
+            accent-color: #3b82f6;
         }
         .checkbox-group label {
-            margin-bottom: 0; /* Override default label margin */
+            margin-bottom: 0;
             font-weight: 500;
             color: #475569;
             cursor: pointer;
         }
         .btn-group {
             display: flex;
-            gap: 10px; /* Space between buttons */
+            gap: 10px;
             margin-top: 20px;
-            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+            flex-wrap: wrap;
         }
-        .btn-primary, .btn-tertiary {
-            flex: 1; /* Make buttons take equal width */
+        .btn-primary, .btn-tertiary, .btn-admin, .btn-apply-settings { /* Added btn-apply-settings */
+            flex: 1;
             padding: 12px 24px;
             border-radius: 8px;
             font-weight: 600;
@@ -85,7 +98,7 @@
             transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
             border: none;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            min-width: 120px; /* Ensure buttons don't get too small */
+            min-width: 120px;
         }
         .btn-primary {
             background-color: #3b82f6;
@@ -101,7 +114,7 @@
             box-shadow: 0 2px 5px rgba(59, 130, 246, 0.3);
         }
         .btn-tertiary {
-            background-color: #f59e0b; /* Amber for pause/resume */
+            background-color: #f59e0b;
             color: #ffffff;
             box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
         }
@@ -112,6 +125,38 @@
         .btn-tertiary:active {
             transform: translateY(0);
             box-shadow: 0 2px 5px rgba(245, 158, 11, 0.3);
+        }
+        .btn-admin {
+            background-color: #64748b;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(100, 116, 139, 0.3);
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            min-width: unset;
+            flex: unset;
+        }
+        .btn-admin:hover {
+            background-color: #475569;
+            transform: translateY(-1px);
+        }
+        .btn-admin:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(100, 116, 139, 0.3);
+        }
+        .btn-apply-settings { /* Style for the new apply settings button */
+            background-color: #10b981; /* Green color */
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+            margin-top: 16px; /* Space above the button */
+        }
+        .btn-apply-settings:hover {
+            background-color: #059669;
+        }
+        .btn-apply-settings:active {
+            box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
         }
         .btn-disabled {
             opacity: 0.6;
@@ -125,8 +170,8 @@
             font-size: 14px;
             line-height: 1.5;
             word-break: break-all;
-            background-color: #eff6ff; /* Default info background */
-            color: #1e40af; /* Default info color */
+            background-color: #eff6ff;
+            color: #1e40af;
             border: 1px solid #bfdbfe;
         }
         .message-box.success {
@@ -147,9 +192,9 @@
             border: 1px solid #cbd5e1;
             border-radius: 8px;
             padding: 16px;
-            min-height: 100px; /* Minimum height for the log area */
-            max-height: 300px; /* Max height before scrolling */
-            overflow-y: auto; /* Enable vertical scrolling */
+            min-height: 100px;
+            max-height: 300px;
+            overflow-y: auto;
             font-size: 14px;
             line-height: 1.5;
             color: #334155;
@@ -169,7 +214,7 @@
             font-weight: 500;
             color: #64748b;
             margin-right: 8px;
-            white-space: nowrap; /* Prevent timestamp from wrapping */
+            white-space: nowrap;
         }
         .log-entry.success {
             color: #065f46;
@@ -195,11 +240,88 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease-in-out;
+        }
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+        }
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .modal-footer button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .modal-footer .btn-submit {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+        .modal-footer .btn-submit:hover {
+            background-color: #2563eb;
+        }
+        .modal-footer .btn-cancel {
+            background-color: #cbd5e1;
+            color: #334155;
+        }
+        .modal-footer .btn-cancel:hover {
+            background-color: #a0aec0;
+        }
+        .modal-error {
+            color: #ef4444;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Send Vote Generator</h1>
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Send Vote Edit</h1>
 
         <div class="form-group">
             <label for="applicationName">Vote Name:</label>
@@ -211,9 +333,21 @@
             <input type="number" id="requestCount" value="1" min="1" class="mt-1">
         </div>
 
-        <div class="checkbox-group">
-            <input type="checkbox" id="fastDelayCheckbox">
-            <label for="fastDelayCheckbox">Speed God Mode (use with care)</label>
+        <!-- Admin Delay Settings Group -->
+        <div id="adminDelaySettingsGroup" class="delay-settings-group hidden">
+            <div class="checkbox-group">
+                <input type="checkbox" id="enableCustomDelayCheckbox">
+                <label for="enableCustomDelayCheckbox">Enable Custom Delay Settings</label>
+            </div>
+            <div class="form-group">
+                <label for="minDelayInput">Min Delay (ms):</label>
+                <input type="number" id="minDelayInput" value="200" min="0" class="mt-1" disabled>
+            </div>
+            <div class="form-group">
+                <label for="maxDelayInput">Max Delay (ms):</label>
+                <input type="number" id="maxDelayInput" value="500" min="0" class="mt-1" disabled>
+            </div>
+            <button id="applyDelaySettingsBtn" class="btn-apply-settings w-full" disabled>Apply Delay Settings</button>
         </div>
 
         <div class="btn-group">
@@ -234,23 +368,69 @@
         </div>
     </div>
 
+    <!-- Admin Mode Button -->
+    <button id="adminModeBtn" class="btn-admin">Admin Mode</button>
+
+    <!-- Password Modal -->
+    <div id="passwordModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">Admin Access</div>
+            <div class="modal-body">
+                <div class="form-group mb-0">
+                    <label for="passwordInput">Enter Password:</label>
+                    <input type="password" id="passwordInput" class="mt-1">
+                </div>
+                <div id="passwordError" class="modal-error hidden">Incorrect password. Please try again.</div>
+            </div>
+            <div class="modal-footer">
+                <button id="passwordCancelBtn" class="btn-cancel">Cancel</button>
+                <button id="passwordSubmitBtn" class="btn-submit">Submit</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const sendRequestBtn = document.getElementById('sendRequestBtn');
             const pauseResumeBtn = document.getElementById('pauseResumeBtn');
             const applicationNameInput = document.getElementById('applicationName');
             const requestCountInput = document.getElementById('requestCount');
-            const fastDelayCheckbox = document.getElementById('fastDelayCheckbox'); // New checkbox element
-            const messageBox = document.getElementById('messageBox'); // For current status
-            const persistentLog = document.getElementById('persistentLog'); // For persistent log
+            const messageBox = document.getElementById('messageBox');
+            const persistentLog = document.getElementById('persistentLog');
 
-            const MAX_LOG_ENTRIES = 500; // Define the maximum number of log entries
+            // Admin Mode elements
+            const adminModeBtn = document.getElementById('adminModeBtn');
+            const passwordModal = document.getElementById('passwordModal');
+            const passwordInput = document.getElementById('passwordInput');
+            const passwordSubmitBtn = document.getElementById('passwordSubmitBtn');
+            const passwordCancelBtn = document.getElementById('passwordCancelBtn');
+            const passwordError = document.getElementById('passwordError');
 
-            let isPaused = false;    // Flag to control the loop for pausing
-            let isRunning = false;   // Flag to indicate if the process is actively running
-            let currentRequestsCompleted = 0; // Tracks successful + failed requests
-            let delayResolve = null;    // To immediately resolve a pending delay promise
-            let delayTimeoutId = null;  // To clear the setTimeout for delay
+            // New Admin Delay Settings elements
+            const adminDelaySettingsGroup = document.getElementById('adminDelaySettingsGroup');
+            const enableCustomDelayCheckbox = document.getElementById('enableCustomDelayCheckbox');
+            const minDelayInput = document.getElementById('minDelayInput');
+            const maxDelayInput = document.getElementById('maxDelayInput');
+            const applyDelaySettingsBtn = document.getElementById('applyDelaySettingsBtn');
+
+            const MAX_LOG_ENTRIES = 500;
+            const CORRECT_PASSWORD_BASE64 = btoa("abcd@1234"); // Base64 encoded password
+
+            // Default and Admin-specific delay ranges
+            const DEFAULT_MIN_DELAY = 4000; // 4 seconds
+            const DEFAULT_MAX_DELAY = 8000; // 8 seconds
+            const CUSTOM_MIN_DELAY_DEFAULT = 200; // Default for custom mode
+            const CUSTOM_MAX_DELAY_DEFAULT = 500; // Default for custom mode
+
+            let isPaused = false;
+            let isRunning = false;
+            let currentRequestsCompleted = 0;
+            let delayResolve = null;
+            let delayTimeoutId = null;
+
+            // Variables to hold the currently active delay range
+            let activeMinDelay = DEFAULT_MIN_DELAY;
+            let activeMaxDelay = DEFAULT_MAX_DELAY;
 
             /**
              * Displays a message in the single-line message box.
@@ -258,8 +438,8 @@
              * @param {string} type - The type of message ('success', 'error', 'info').
              */
             function showMessageBoxMessage(message, type) {
-                messageBox.innerHTML = message; // Use innerHTML to allow for bold tags
-                messageBox.className = `message-box ${type}`; // Reset classes and add new type
+                messageBox.innerHTML = message;
+                messageBox.className = `message-box ${type}`;
                 messageBox.classList.remove('hidden');
             }
 
@@ -277,7 +457,6 @@
              * @param {string} type - The type of message ('success', 'error', 'info').
              */
             function appendPersistentLog(message, type) {
-                // Remove oldest entry if max limit is reached
                 if (persistentLog.children.length >= MAX_LOG_ENTRIES) {
                     persistentLog.removeChild(persistentLog.children[0]);
                 }
@@ -290,7 +469,6 @@
                 logEntry.innerHTML = `<span class="timestamp">${timestamp}</span> ${message}`;
                 persistentLog.appendChild(logEntry);
                 
-                // Scroll to the bottom
                 persistentLog.scrollTop = persistentLog.scrollHeight;
             }
 
@@ -313,7 +491,7 @@
              */
             function createCancellableDelay(ms) {
                 return new Promise(resolve => {
-                    delayResolve = resolve; // Store resolve function
+                    delayResolve = resolve;
                     delayTimeoutId = setTimeout(() => {
                         delayResolve = null;
                         delayTimeoutId = null;
@@ -327,13 +505,12 @@
              */
             function resetButtonsAndFlags() {
                 isPaused = false;
-                isRunning = false; // Set running flag to false
+                isRunning = false;
 
-                // Clear any pending timeouts
                 if (delayTimeoutId) {
                     clearTimeout(delayTimeoutId);
                     if (delayResolve) {
-                        delayResolve(); // Resolve any pending delay promise
+                        delayResolve();
                     }
                     delayResolve = null;
                     delayTimeoutId = null;
@@ -346,22 +523,114 @@
                 pauseResumeBtn.classList.add('btn-disabled');
                 pauseResumeBtn.disabled = true;
                 pauseResumeBtn.textContent = 'Pause';
-                pauseResumeBtn.classList.remove('btn-primary'); // Ensure correct styling for Pause
+                pauseResumeBtn.classList.remove('btn-primary');
                 pauseResumeBtn.classList.add('btn-tertiary');
             }
 
-            // Event listener for the Pause/Resume button
+            // --- Modal Functions ---
+            function showPasswordModal() {
+                passwordModal.classList.add('show');
+                passwordInput.value = ''; // Clear input on show
+                passwordError.classList.add('hidden'); // Hide error message
+                passwordInput.focus(); // Focus on input field
+            }
+
+            function hidePasswordModal() {
+                passwordModal.classList.remove('show');
+            }
+
+            // --- Admin Delay Settings Control ---
+            function updateDelayInputStates() {
+                const isCustomEnabled = enableCustomDelayCheckbox.checked;
+                minDelayInput.disabled = !isCustomEnabled;
+                maxDelayInput.disabled = !isCustomEnabled;
+                applyDelaySettingsBtn.disabled = !isCustomEnabled;
+
+                if (isCustomEnabled) {
+                    minDelayInput.value = CUSTOM_MIN_DELAY_DEFAULT;
+                    maxDelayInput.value = CUSTOM_MAX_DELAY_DEFAULT;
+                } else {
+                    // If custom is disabled, revert active delays to default
+                    activeMinDelay = DEFAULT_MIN_DELAY;
+                    activeMaxDelay = DEFAULT_MAX_DELAY;
+                    appendPersistentLog(`Delay settings reverted to default: ${DEFAULT_MIN_DELAY}-${DEFAULT_MAX_DELAY}ms.`, 'info');
+                }
+            }
+
+            // --- Event Listeners ---
+            adminModeBtn.addEventListener('click', showPasswordModal);
+
+            passwordSubmitBtn.addEventListener('click', () => {
+                const enteredPassword = passwordInput.value;
+                try {
+                    const enteredPasswordBase64 = btoa(enteredPassword);
+                    if (enteredPasswordBase64 === CORRECT_PASSWORD_BASE64) {
+                        hidePasswordModal();
+                        adminDelaySettingsGroup.classList.remove('hidden'); // Show the admin delay settings
+                        appendPersistentLog('Admin mode unlocked. Custom delay settings available.', 'success');
+                        // Initialize delay input states based on checkbox
+                        updateDelayInputStates();
+                    } else {
+                        passwordError.classList.remove('hidden');
+                        passwordInput.value = '';
+                    }
+                } catch (e) {
+                    passwordError.textContent = 'An encoding error occurred.';
+                    passwordError.classList.remove('hidden');
+                    console.error("Password encoding error:", e);
+                }
+            });
+
+            passwordCancelBtn.addEventListener('click', () => {
+                hidePasswordModal();
+                enableCustomDelayCheckbox.checked = false; // Uncheck if modal cancelled
+                updateDelayInputStates(); // Ensure inputs are disabled
+            });
+
+            // Allow pressing Enter in password field to submit
+            passwordInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    passwordSubmitBtn.click();
+                }
+            });
+
+            // Listener for the "Enable Custom Delay Settings" checkbox
+            enableCustomDelayCheckbox.addEventListener('change', updateDelayInputStates);
+
+            // Listener for the "Apply Delay Settings" button
+            applyDelaySettingsBtn.addEventListener('click', () => {
+                const newMinDelay = parseInt(minDelayInput.value, 10);
+                const newMaxDelay = parseInt(maxDelayInput.value, 10);
+
+                if (isNaN(newMinDelay) || isNaN(newMaxDelay) || newMinDelay < 0 || newMaxDelay < 0) {
+                    showMessageBoxMessage('Invalid delay values. Please enter positive numbers.', 'error');
+                    appendPersistentLog('Error: Invalid delay values entered (must be positive numbers).', 'error');
+                    return;
+                }
+                if (newMinDelay > newMaxDelay) {
+                    showMessageBoxMessage('Min Delay cannot be greater than Max Delay.', 'error');
+                    appendPersistentLog('Error: Min Delay cannot be greater than Max Delay.', 'error');
+                    return;
+                }
+
+                activeMinDelay = newMinDelay;
+                activeMaxDelay = newMaxDelay;
+                showMessageBoxMessage(`Delay settings applied: ${activeMinDelay}ms - ${activeMaxDelay}ms.`, 'success');
+                appendPersistentLog(`Custom delay settings applied: <b>${activeMinDelay}ms - ${activeMaxDelay}ms</b>.`, 'success');
+            });
+
+
             pauseResumeBtn.addEventListener('click', () => {
-                isPaused = !isPaused; // Toggle pause state
+                isPaused = !isPaused;
                 if (isPaused) {
                     pauseResumeBtn.textContent = 'Resume';
-                    pauseResumeBtn.classList.remove('btn-tertiary'); // Change color for Resume
+                    pauseResumeBtn.classList.remove('btn-tertiary');
                     pauseResumeBtn.classList.add('btn-primary');
                     showMessageBoxMessage(`Requests paused. <b>${currentRequestsCompleted}</b> requests completed so far.`, 'info');
                     appendPersistentLog(`User paused requests. <b>${currentRequestsCompleted}</b> requests completed.`, 'info');
                 } else {
                     pauseResumeBtn.textContent = 'Pause';
-                    pauseResumeBtn.classList.remove('btn-primary'); // Revert color for Pause
+                    pauseResumeBtn.classList.remove('btn-primary');
                     pauseResumeBtn.classList.add('btn-tertiary');
                     showMessageBoxMessage(`Resuming requests from request <b>${currentRequestsCompleted + 1}</b>...`, 'info');
                     appendPersistentLog(`User resumed requests. Resuming from request <b>${currentRequestsCompleted + 1}</b>.`, 'info');
@@ -369,17 +638,16 @@
             });
 
             sendRequestBtn.addEventListener('click', async () => {
-                hideMessageBox(); // Clear only the current status box
-                // persistentLog is NOT cleared here
-                resetButtonsAndFlags(); // Reset flags and buttons for a new sequence
-                currentRequestsCompleted = 0; // Reset counter for new batch
-                isRunning = true; // Set running flag to true
+                hideMessageBox();
+                resetButtonsAndFlags();
+                currentRequestsCompleted = 0;
+                isRunning = true;
 
                 const applicationName = applicationNameInput.value.trim();
                 if (!applicationName) {
                     showMessageBoxMessage('Please enter a Vote Name.', 'error');
                     appendPersistentLog('Error: Please enter a Vote Name.', 'error');
-                    resetButtonsAndFlags(); // Reset on validation failure
+                    resetButtonsAndFlags();
                     return;
                 }
 
@@ -387,15 +655,14 @@
                 if (isNaN(requestCount) || requestCount < 1) {
                     showMessageBoxMessage('Please enter a valid number of requests (minimum 1).', 'error');
                     appendPersistentLog('Error: Please enter a valid number of requests (minimum 1).', 'error');
-                    resetButtonsAndFlags(); // Reset on validation failure
+                    resetButtonsAndFlags();
                     return;
                 }
 
-                // Determine delay range based on checkbox state
-                const minDelay = fastDelayCheckbox.checked ? 200 : 500; // Minimum 100ms for fast delay
-                const maxDelay = fastDelayCheckbox.checked ? 300 : 1200;
+                // Use the currently active delay range
+                const minDelay = activeMinDelay;
+                const maxDelay = activeMaxDelay;
 
-                // Common headers for both requests
                 const commonHeaders = {
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'Origin': 'https://survey123.arcgis.com',
@@ -405,11 +672,9 @@
                 const infoUrl = 'https://mygems.jmg.gov.my/server/rest/services/Hosted/survey123_b3d41267c0f64b558f1cc3bf25ecae52_form/FeatureServer/uploads/info';
                 const applyEditsUrl = 'https://mygems.jmg.gov.my/server/rest/services/Hosted/survey123_b3d41267c0f64b558f1cc3bf25ecae52_form/FeatureServer/applyEdits';
 
-                // Prepare info request form data (constant)
                 const infoFormData = new URLSearchParams();
                 infoFormData.append('f', 'json');
 
-                // Disable send button, enable pause button
                 sendRequestBtn.innerHTML = '<span class="loading-spinner"></span> Starting requests...';
                 sendRequestBtn.classList.add('btn-disabled');
                 sendRequestBtn.disabled = true;
@@ -419,24 +684,20 @@
                 let successfulRequests = 0;
                 let failedRequests = 0;
 
-                appendPersistentLog(`Starting new batch of <b>${requestCount}</b> requests for "${applicationName}". Delay range: ${minDelay}-${maxDelay}ms.`, 'info');
+                appendPersistentLog(`Starting new batch of <b>${requestCount}</b> requests for "${applicationName}". Current delay range: ${minDelay}-${maxDelay}ms.`, 'info');
 
                 for (let i = 0; i < requestCount; i++) {
-                    // Handle pause logic
                     while (isPaused) {
-                        // Wait here until isPaused becomes false
-                        await new Promise(resolve => setTimeout(resolve, 100)); // Check every 100ms
+                        await new Promise(resolve => setTimeout(resolve, 100));
                     }
 
                     const currentRequestNumber = i + 1;
                     showMessageBoxMessage(`Sending request ${currentRequestNumber} of ${requestCount}...`, 'info');
                     appendPersistentLog(`Initiating request ${currentRequestNumber} of ${requestCount}.`, 'info');
 
-                    // Generate a new UUID for each request
-                    const globalId = `{${crypto.randomUUID().toUpperCase()}}`; // Format as {UUID}
+                    const globalId = `{${crypto.randomUUID().toUpperCase()}}`;
 
                     try {
-                        // --- First Request: /uploads/info ---
                         showMessageBoxMessage(`Sending Info request (${currentRequestNumber}/${requestCount})...`, 'info');
                         appendPersistentLog(`Sending Info request (${currentRequestNumber}/${requestCount})...`, 'info');
                         const infoResponse = await fetch(infoUrl, {
@@ -453,16 +714,13 @@
                         console.log(`Info Response (Request ${currentRequestNumber}):`, infoResult);
                         appendPersistentLog(`Info request (${currentRequestNumber}/${requestCount}) completed.`, 'info');
 
-                        // --- Second Request: /applyEdits ---
-                        // Check for pause again before sending the second request (if resumed, this will pass)
                         while (isPaused) {
                             await new Promise(resolve => setTimeout(resolve, 100));
                         }
 
-                        showMessageBoxMessage(`Sending ApplyEdits request (${currentRequestNumber}/${requestCount})...`, 'info');
+                        showMessageBoxMessage(`Sending ApplyEdits request (${currentRequestNumber}/${requestCount}...`, 'info');
                         appendPersistentLog(`Sending ApplyEdits request (${currentRequestNumber}/${requestCount})...`, 'info');
 
-                        // Construct the 'edits' payload dynamically
                         const editsPayload = JSON.stringify([
                             {
                                 "id": 0,
@@ -484,7 +742,6 @@
                             }
                         ]);
 
-                        // Prepare the FormData for the applyEdits POST request
                         const applyEditsFormData = new URLSearchParams();
                         applyEditsFormData.append('f', 'json');
                         applyEditsFormData.append('edits', editsPayload);
@@ -527,22 +784,19 @@
                         appendPersistentLog(errMsg, 'error');
                     }
 
-                    currentRequestsCompleted = successfulRequests + failedRequests; // Update count after each request pair
+                    currentRequestsCompleted = successfulRequests + failedRequests;
 
-                    // Determine random delay based on selected range
                     const randomDelay = getRandomInt(minDelay, maxDelay);
                     
-                    // Check for pause again before waiting for the delay
                     while (isPaused) {
                         await new Promise(resolve => setTimeout(resolve, 100));
                     }
-                    if (currentRequestNumber < requestCount) { // Only delay if not the last request
+                    if (currentRequestNumber < requestCount) {
                         appendPersistentLog(`Waiting for random delay (${(randomDelay / 1000).toFixed(2)}s) before next request...`, 'info');
                         await createCancellableDelay(randomDelay);
                     }
                 }
 
-                // Final summary message
                 let finalSummaryMessage;
                 let finalSummaryType;
 
@@ -560,7 +814,7 @@
                 showMessageBoxMessage(finalSummaryMessage, finalSummaryType);
                 appendPersistentLog(finalSummaryMessage, finalSummaryType);
 
-                resetButtonsAndFlags(); // Reset buttons and flags at the end
+                resetButtonsAndFlags();
             });
         });
     </script>
