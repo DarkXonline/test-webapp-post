@@ -35,8 +35,8 @@
             font-weight: 600;
             color: #334155;
         }
-        .form-group input,
-        .form-group textarea {
+        .form-group input[type="text"],
+        .form-group input[type="number"] {
             width: 100%;
             padding: 12px;
             border: 1px solid #cbd5e1;
@@ -46,11 +46,29 @@
             color: #334155;
             transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
-        .form-group input:focus,
-        .form-group textarea:focus {
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-top: -8px; /* Adjust to align with other form groups */
+            margin-bottom: 16px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 8px;
+            width: 20px;
+            height: 20px;
+            accent-color: #3b82f6; /* Style checkbox color */
+        }
+        .checkbox-group label {
+            margin-bottom: 0; /* Override default label margin */
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
         }
         .btn-group {
             display: flex;
@@ -181,7 +199,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Send Vote Generator</h1>
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Send Survey123 Edit</h1>
 
         <div class="form-group">
             <label for="applicationName">Vote Name:</label>
@@ -191,6 +209,11 @@
         <div class="form-group">
             <label for="requestCount">Number of Requests:</label>
             <input type="number" id="requestCount" value="1" min="1" class="mt-1">
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="fastDelayCheckbox">
+            <label for="fastDelayCheckbox">Speed God Mode (use with care)</label>
         </div>
 
         <div class="btn-group">
@@ -217,6 +240,7 @@
             const pauseResumeBtn = document.getElementById('pauseResumeBtn');
             const applicationNameInput = document.getElementById('applicationName');
             const requestCountInput = document.getElementById('requestCount');
+            const fastDelayCheckbox = document.getElementById('fastDelayCheckbox'); // New checkbox element
             const messageBox = document.getElementById('messageBox'); // For current status
             const persistentLog = document.getElementById('persistentLog'); // For persistent log
 
@@ -367,6 +391,10 @@
                     return;
                 }
 
+                // Determine delay range based on checkbox state
+                const minDelay = fastDelayCheckbox.checked ? 200 : 500; // Minimum 100ms for fast delay
+                const maxDelay = fastDelayCheckbox.checked ? 300 : 1200;
+
                 // Common headers for both requests
                 const commonHeaders = {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -391,7 +419,7 @@
                 let successfulRequests = 0;
                 let failedRequests = 0;
 
-                appendPersistentLog(`Starting new batch of <b>${requestCount}</b> requests for "${applicationName}".`, 'info');
+                appendPersistentLog(`Starting new batch of <b>${requestCount}</b> requests for "${applicationName}". Delay range: ${minDelay}-${maxDelay}ms.`, 'info');
 
                 for (let i = 0; i < requestCount; i++) {
                     // Handle pause logic
@@ -501,15 +529,15 @@
 
                     currentRequestsCompleted = successfulRequests + failedRequests; // Update count after each request pair
 
-                    // Random delay between 500ms and 3000ms (3 seconds)
-                    const randomDelay = getRandomInt(500, 1200); // Reverted to 3000ms max as per previous request
+                    // Determine random delay based on selected range
+                    const randomDelay = getRandomInt(minDelay, maxDelay);
                     
                     // Check for pause again before waiting for the delay
                     while (isPaused) {
                         await new Promise(resolve => setTimeout(resolve, 100));
                     }
                     if (currentRequestNumber < requestCount) { // Only delay if not the last request
-                        appendPersistentLog(`Waiting for random delay (${(randomDelay / 1000).toFixed(1)}s) before next request...`, 'info');
+                        appendPersistentLog(`Waiting for random delay (${(randomDelay / 1000).toFixed(2)}s) before next request...`, 'info');
                         await createCancellableDelay(randomDelay);
                     }
                 }
