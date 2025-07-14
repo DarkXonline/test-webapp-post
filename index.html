@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insane Vote Request Generator</title>
+    <title>Inane Vote Request Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -38,7 +38,8 @@
         }
         .form-group input[type="text"],
         .form-group input[type="number"],
-        .form-group input[type="password"] {
+        .form-group input[type="password"],
+        .form-group select { /* Added select input style */
             width: 100%;
             padding: 12px;
             border: 1px solid #cbd5e1;
@@ -50,7 +51,8 @@
         }
         .form-group input[type="text"]:focus,
         .form-group input[type="number"]:focus,
-        .form-group input[type="password"]:focus {
+        .form-group input[type="password"]:focus,
+        .form-group select:focus { /* Added select input focus style */
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
@@ -321,11 +323,23 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Send Vote Edit</h1>
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Send Vote Request</h1>
 
         <div class="form-group">
-            <label for="applicationName">Vote Name:</label>
-            <input type="text" id="applicationName" value="Geomarin" class="mt-1">
+            <label for="applicationNameSelect">Vote Name (Select):</label>
+            <select id="applicationNameSelect" class="mt-1">
+                <option value="Sinkhole Watch Malaysia (SWM)">Sinkhole Watch Malaysia (SWM)</option>
+                <option value="Coastal Studies & Management Hu">Coastal Studies & Management Hub</option>
+                <option value="Geomarin" selected>Geomarin</option>
+                <option value="Mineral Resource Database JMG P">Mineral Resource Database JMG Pahang</option>
+                <option value="Geotapak Malaysia">Geotapak Malaysia</option>
+                <option value="Smart PPM">Smart PPM</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="applicationNameInput">Vote Name (Manual Entry for Debugging):</label>
+            <input type="text" id="applicationNameInput" value="Geomarin" placeholder="Overrides selection if not empty" class="mt-1">
         </div>
 
         <div class="form-group">
@@ -393,7 +407,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             const sendRequestBtn = document.getElementById('sendRequestBtn');
             const pauseResumeBtn = document.getElementById('pauseResumeBtn');
-            const applicationNameInput = document.getElementById('applicationName');
+            const applicationNameSelect = document.getElementById('applicationNameSelect'); // Select dropdown
+            const applicationNameInput = document.getElementById('applicationNameInput'); // Manual text input
             const requestCountInput = document.getElementById('requestCount');
             const messageBox = document.getElementById('messageBox');
             const persistentLog = document.getElementById('persistentLog');
@@ -406,7 +421,7 @@
             const passwordCancelBtn = document.getElementById('passwordCancelBtn');
             const passwordError = document.getElementById('passwordError');
 
-            // New Admin Delay Settings elements
+            // Admin Delay Settings elements
             const adminDelaySettingsGroup = document.getElementById('adminDelaySettingsGroup');
             const enableCustomDelayCheckbox = document.getElementById('enableCustomDelayCheckbox');
             const minDelayInput = document.getElementById('minDelayInput');
@@ -619,6 +634,14 @@
                 appendPersistentLog(`Custom delay settings applied: <b>${activeMinDelay}ms - ${activeMaxDelay}ms</b>.`, 'success');
             });
 
+            // NEW: Listener for the dropdown change
+            applicationNameSelect.addEventListener('change', () => {
+                applicationNameInput.value = applicationNameSelect.value;
+            });
+
+            // Initialize the manual input with the default selected value
+            applicationNameInput.value = applicationNameSelect.value;
+
 
             pauseResumeBtn.addEventListener('click', () => {
                 isPaused = !isPaused;
@@ -643,10 +666,12 @@
                 currentRequestsCompleted = 0;
                 isRunning = true;
 
-                const applicationName = applicationNameInput.value.trim();
+                // Get application name: prioritize manual input if not empty, otherwise use select dropdown
+                const applicationName = applicationNameInput.value.trim() !== '' ? applicationNameInput.value.trim() : applicationNameSelect.value;
+
                 if (!applicationName) {
-                    showMessageBoxMessage('Please enter a Vote Name.', 'error');
-                    appendPersistentLog('Error: Please enter a Vote Name.', 'error');
+                    showMessageBoxMessage('Please select or enter a Vote Name.', 'error');
+                    appendPersistentLog('Error: Please select or enter a Vote Name.', 'error');
                     resetButtonsAndFlags();
                     return;
                 }
@@ -719,7 +744,7 @@
                         }
 
                         showMessageBoxMessage(`Sending ApplyEdits request (${currentRequestNumber}/${requestCount}...`, 'info');
-                        appendPersistentLog(`Sending ApplyEdits request (${currentRequestNumber}/${requestCount})...`, 'info');
+                        appendPersistentLog(`Sending ApplyEdits request (${currentRequestNumber}/${requestNumber})...`, 'info');
 
                         const editsPayload = JSON.stringify([
                             {
