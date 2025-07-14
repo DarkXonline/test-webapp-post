@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inane Vote Request Generator</title>
+    <title>Insane Vote Request Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -634,7 +634,7 @@
                 appendPersistentLog(`Custom delay settings applied: <b>${activeMinDelay}ms - ${activeMaxDelay}ms</b>.`, 'success');
             });
 
-            // NEW: Listener for the dropdown change
+            // Listener for the dropdown change
             applicationNameSelect.addEventListener('change', () => {
                 applicationNameInput.value = applicationNameSelect.value;
             });
@@ -694,6 +694,7 @@
                     'Referer': 'https://survey123.arcgis.com/',
                 };
 
+                // UPDATED URLs
                 const infoUrl = 'https://mygems.jmg.gov.my/server/rest/services/Hosted/survey123_c42e64fe2e1a4ab6aa5e74b83b0501ec_form/FeatureServer/uploads/info';
                 const applyEditsUrl = 'https://mygems.jmg.gov.my/server/rest/services/Hosted/survey123_c42e64fe2e1a4ab6aa5e74b83b0501ec_form/FeatureServer/applyEdits';
 
@@ -744,7 +745,7 @@
                         }
 
                         showMessageBoxMessage(`Sending ApplyEdits request (${currentRequestNumber}/${requestCount}...`, 'info');
-                        appendPersistentLog(`Sending ApplyEdits request (${currentRequestNumber}/${requestNumber})...`, 'info');
+                        appendPersistentLog(`Sending ApplyEdits request (${currentRequestNumber}/${currentRequestNumber})...`, 'info');
 
                         const editsPayload = JSON.stringify([
                             {
